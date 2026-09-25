@@ -34,6 +34,7 @@ final class Settings {
         static let popupBehavior = "popupBehavior"
         static let lastURL = "lastURL"
         static let restoreLastPage = "restoreLastPage"
+        static let lastUserAgent = "lastUserAgent"
     }
 
     private init() {
@@ -43,7 +44,8 @@ final class Settings {
             Key.customUserAgent: "",
             Key.spoofNavigator: true,
             Key.popupBehavior: PopupBehavior.newWindow.rawValue,
-            Key.restoreLastPage: true,
+            // Like Dodo, start from the home URL: the site decides where to send you from there.
+            Key.restoreLastPage: false,
         ])
     }
 
@@ -80,6 +82,12 @@ final class Settings {
     var lastURL: String? {
         get { defaults.string(forKey: Key.lastURL) }
         set { defaults.set(newValue, forKey: Key.lastURL) }
+    }
+
+    /// The User-Agent the website data was last used with.
+    var lastUserAgent: String? {
+        get { defaults.string(forKey: Key.lastUserAgent) }
+        set { defaults.set(newValue, forKey: Key.lastUserAgent) }
     }
 
     var activeProfile: UserAgentProfile {

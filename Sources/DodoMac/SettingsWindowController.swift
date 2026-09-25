@@ -135,7 +135,7 @@ final class SettingsWindowController: NSWindowController {
         homeField.stringValue = Settings.defaultHomeURL
         profilePopup.selectItem(at: 0)
         spoofCheckbox.state = .on
-        restoreCheckbox.state = .on
+        restoreCheckbox.state = .off
         popupBehaviorPopup.selectItem(at: 0)
         updateCustomFieldState()
     }

@@ -9,8 +9,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.mainMenu = MainMenu.build()
-        openNewWindow(with: Settings.shared.startURL)
         NSApp.activate(ignoringOtherApps: true)
+        clearDataIfIdentityChanged { [weak self] in
+            self?.openNewWindow(with: Settings.shared.startURL)
+        }
+    }
+
+    /// Sites remember which device they saw (cached redirects, cookies). When the User-Agent changes,
+    /// start clean so the site re-detects the device instead of reusing the old decision.
+    private func clearDataIfIdentityChanged(then completion: @escaping () -> Void) {
+        let settings = Settings.shared
+        let userAgent = settings.activeProfile.userAgent
+        guard settings.lastUserAgent != userAgent else {
+            completion()
+            return
+        }
+        settings.lastUserAgent = userAgent
+        settings.lastURL = nil
+        WebViewFactory.dataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), modifiedSince: .distantPast) {
+            completion()
+        }
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -95,7 +113,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let store = WebViewFactory.dataStore
         store.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), modifiedSince: .distantPast) { [weak self] in
-            self?.windowControllers.forEach { $0.reloadPage(nil) }
+            self?.windowControllers.forEach { $0.goHome(nil) }
         }
     }
 

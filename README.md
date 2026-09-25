@@ -15,7 +15,7 @@ itself to websites as an iPhone:
 
 Other features:
 
-- Opens `https://netmirror.app` by default and restores the last page on launch
+- Opens `https://netmirror.app` on launch (the Home button goes back there)
 - Cookies / logins are kept between launches and shared across windows
 - Video autoplay, HLS playback, AirPlay and HTML5 full-screen video
 - `window.open` / `target=_blank` popups (new window, same window, or blocked; see Settings)

@@ -304,9 +304,17 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate, NSToo
 
     @objc private func settingsChanged() {
         let profile = Settings.shared.activeProfile
+        let identityChanged = webView.customUserAgent != profile.userAgent
         webView.customUserAgent = profile.userAgent
         WebViewFactory.applyProfile(to: webView.configuration)
-        reloadPage(nil)
+        guard identityChanged else {
+            reloadPage(nil)
+            return
+        }
+        Settings.shared.lastUserAgent = profile.userAgent
+        WebViewFactory.dataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), modifiedSince: .distantPast) { [weak self] in
+            self?.goHome(nil)
+        }
     }
 
     // MARK: - NSWindowDelegate
