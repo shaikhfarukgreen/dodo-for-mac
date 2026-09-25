@@ -15,8 +15,9 @@ struct UserAgentProfile: Equatable {
 
     static let iPhoneWebView = UserAgentProfile(
         id: "iphone-webview",
-        name: "iPhone – in-app WebView (Dodo-style)",
-        userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+        name: "iPhone – Dodo app",
+        // Exact User-Agent sent by the Dodo iOS app; sites detect it by the "/os.gatuIOS" suffix.
+        userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 /os.gatuIOS v1.0",
         platform: "iPhone",
         maxTouchPoints: 5,
         prefersMobileContent: true
