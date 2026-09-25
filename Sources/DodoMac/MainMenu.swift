@@ -58,6 +58,7 @@ enum MainMenu {
         viewMenu.addItem(item("Zoom In", #selector(BrowserWindowController.zoomIn(_:)), "+"))
         viewMenu.addItem(item("Zoom Out", #selector(BrowserWindowController.zoomOut(_:)), "-"))
         viewMenu.addItem(item("Actual Size", #selector(BrowserWindowController.actualSize(_:)), "0"))
+        viewMenu.addItem(item("iPhone-Size Window", #selector(BrowserWindowController.togglePhoneSize(_:)), "p", [.command, .shift]))
         viewMenu.addItem(.separator())
         let fullScreen = viewMenu.addItem(withTitle: "Enter Full Screen", action: #selector(NSWindow.toggleFullScreen(_:)), keyEquivalent: "f")
         fullScreen.keyEquivalentModifierMask = [.command, .control]

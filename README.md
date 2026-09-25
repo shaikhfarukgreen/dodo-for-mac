@@ -21,6 +21,7 @@ Other features:
 - `window.open` / `target=_blank` popups (new window, same window, or blocked; see Settings)
 - JavaScript `alert` / `confirm` / `prompt`, file uploads, downloads to `~/Downloads`
 - Address bar, back/forward, reload, zoom, ⌘-click to open in a new window
+- View → iPhone-Size Window (⌘⇧P) to switch between phone and laptop layouts
 - Web Inspector enabled (right-click → Inspect Element) for debugging
 
 ## Download a prebuilt app

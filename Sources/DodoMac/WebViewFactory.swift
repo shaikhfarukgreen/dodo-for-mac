@@ -21,9 +21,17 @@ enum WebViewFactory {
         }
         config.defaultWebpagePreferences.allowsContentJavaScript = true
 
+        // An in-app WebView exposes `window.webkit.messageHandlers`; Safari does not. Sites use this
+        // to tell an app like Dodo apart from a normal browser, so register a no-op handler.
+        for name in bridgeHandlerNames {
+            config.userContentController.add(NoOpMessageHandler.shared, name: name)
+        }
+
         applyProfile(to: config)
         return config
     }
+
+    static let bridgeHandlerNames = ["dodo", "iOS", "bridge"]
 
     /// Installs the per-profile settings (content mode + navigator spoofing script).
     static func applyProfile(to config: WKWebViewConfiguration) {
@@ -49,5 +57,14 @@ enum WebViewFactory {
             webView.isInspectable = true
         }
         return webView
+    }
+}
+
+/// Accepts and ignores messages posted by page scripts to `window.webkit.messageHandlers.*`.
+final class NoOpMessageHandler: NSObject, WKScriptMessageHandler {
+    static let shared = NoOpMessageHandler()
+
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        NSLog("Page message to \(message.name): \(message.body)")
     }
 }

@@ -75,6 +75,15 @@ struct UserAgentProfile: Equatable {
         )
     }
 
+    /// Reports an iPhone-sized screen, since `screen.width` on a Mac is an obvious desktop signal.
+    private var screenOverrides: String {
+        guard platform == "iPhone" else { return "" }
+        return """
+        ['width', 'availWidth'].forEach(function (k) { define(Screen.prototype, k, 390); });
+          ['height', 'availHeight'].forEach(function (k) { define(Screen.prototype, k, 844); });
+        """
+    }
+
     /// JavaScript injected at document start in every frame so `navigator` matches the User-Agent.
     var spoofingScript: String? {
         guard let platform = platform else { return nil }
@@ -91,6 +100,7 @@ struct UserAgentProfile: Equatable {
           if (!('ontouchstart' in window)) { window.ontouchstart = null; }
           if (!('ontouchstart' in document.documentElement)) { document.documentElement.ontouchstart = null; }
           if (typeof window.orientation === 'undefined') { define(window, 'orientation', 0); }
+          \(screenOverrides)
         })();
         """
     }

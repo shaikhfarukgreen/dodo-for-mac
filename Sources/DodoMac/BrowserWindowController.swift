@@ -162,13 +162,10 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate, NSToo
         case ItemID.address:
             item.label = "Address"
             item.view = addressField
-            addressField.translatesAutoresizingMaskIntoConstraints = false
-            let width = addressField.widthAnchor.constraint(equalToConstant: 2000)
-            width.priority = .defaultLow
-            NSLayoutConstraint.activate([
-                addressField.widthAnchor.constraint(greaterThanOrEqualToConstant: 200),
-                width,
-            ])
+            // Fixed min/max sizes let the field stretch with the window instead of overflowing into ">>".
+            addressField.frame = NSRect(x: 0, y: 0, width: 600, height: 24)
+            item.minSize = NSSize(width: 160, height: 24)
+            item.maxSize = NSSize(width: 1400, height: 24)
         default:
             return nil
         }
@@ -261,6 +258,17 @@ final class BrowserWindowController: NSWindowController, NSWindowDelegate, NSToo
     @objc func focusAddressBar(_ sender: Any?) {
         window?.makeFirstResponder(addressField)
         addressField.currentEditor()?.selectAll(nil)
+    }
+
+    /// Resizes the window to an iPhone-like shape, or back to a normal laptop size.
+    @objc func togglePhoneSize(_ sender: Any?) {
+        guard let window = window, !window.styleMask.contains(.fullScreen) else { return }
+        let phone = NSSize(width: 430, height: 900)
+        let current = window.contentLayoutRect.size
+        let isPhone = abs(current.width - phone.width) < 20
+        var frame = window.frameRect(forContentRect: NSRect(origin: .zero, size: isPhone ? NSSize(width: 1280, height: 820) : phone))
+        frame.origin = NSPoint(x: window.frame.midX - frame.width / 2, y: window.frame.maxY - frame.height)
+        window.setFrame(frame, display: true, animate: true)
     }
 
     @objc func zoomIn(_ sender: Any?) { webView.pageZoom = min(webView.pageZoom + 0.1, 3) }
