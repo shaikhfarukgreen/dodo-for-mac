@@ -25,9 +25,11 @@ Other features:
 
 ## Download a prebuilt app
 
-Each push runs the **Build macOS app** GitHub Action. Open the latest run under the
-repository's *Actions* tab, download the `DodoForMac` artifact, unzip it and move
-`Dodo for Mac.app` to `/Applications`.
+No developer tools are needed. Download **DodoForMac.zip** from the latest release:
+
+**https://github.com/shaikhfarukgreen/dodo-for-mac/releases/latest**
+
+Unzip it and drag `Dodo for Mac.app` into `/Applications`.
 
 The app is ad-hoc signed (not notarized), so on first launch **right-click → Open** or run:
 
