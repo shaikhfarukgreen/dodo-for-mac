@@ -361,6 +361,9 @@ extension BrowserWindowController: WKNavigationDelegate {
             decisionHandler(.allow, preferences)
             return
         }
+        if navigationAction.targetFrame?.isMainFrame ?? true {
+            Diagnostics.shared.log("NAV \(navigationAction.request.httpMethod ?? "GET") \(url.absoluteString) (type \(navigationAction.navigationType.rawValue))")
+        }
 
         // Hand non-web links (mailto:, tel:, app deep links, …) to macOS.
         let webSchemes: Set<String> = ["http", "https", "about", "data", "blob", "file", "javascript"]
@@ -387,6 +390,9 @@ extension BrowserWindowController: WKNavigationDelegate {
     }
 
     func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+        if navigationResponse.isForMainFrame, let http = navigationResponse.response as? HTTPURLResponse {
+            Diagnostics.shared.log("RESPONSE \(http.statusCode) \(http.url?.absoluteString ?? "?")")
+        }
         if let response = navigationResponse.response as? HTTPURLResponse,
            let disposition = response.value(forHTTPHeaderField: "Content-Disposition"),
            disposition.lowercased().hasPrefix("attachment") {
@@ -404,7 +410,16 @@ extension BrowserWindowController: WKNavigationDelegate {
         download.delegate = DownloadManager.shared
     }
 
+    func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
+        Diagnostics.shared.log("REDIRECT -> \(webView.url?.absoluteString ?? "?")")
+    }
+
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        Diagnostics.shared.snapshot(webView)
+    }
+
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        Diagnostics.shared.log("FAILED \(error.localizedDescription)")
         showError(error)
     }
 

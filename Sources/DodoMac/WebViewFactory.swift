@@ -26,6 +26,7 @@ enum WebViewFactory {
         for name in bridgeHandlerNames {
             config.userContentController.add(NoOpMessageHandler.shared, name: name)
         }
+        config.userContentController.add(Diagnostics.shared, name: Diagnostics.handlerName)
 
         applyProfile(to: config)
         return config
@@ -45,6 +46,9 @@ enum WebViewFactory {
         if settings.spoofNavigator, let source = profile.spoofingScript {
             let script = WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: false)
             controller.addUserScript(script)
+        }
+        if Diagnostics.shared.isRecording {
+            controller.addUserScript(WKUserScript(source: Diagnostics.probeScript, injectionTime: .atDocumentStart, forMainFrameOnly: false))
         }
     }
 

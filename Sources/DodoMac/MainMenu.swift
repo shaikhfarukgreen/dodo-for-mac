@@ -83,6 +83,9 @@ enum MainMenu {
         // Help menu
         let helpMenu = NSMenu(title: "Help")
         helpMenu.addItem(item("Dodo for Mac Help", #selector(AppDelegate.openHelp(_:)), "?"))
+        helpMenu.addItem(.separator())
+        helpMenu.addItem(item("Record Diagnostics", #selector(AppDelegate.toggleDiagnostics(_:)), ""))
+        helpMenu.addItem(item("Save Diagnostic Report", #selector(AppDelegate.saveDiagnostics(_:)), ""))
         addSubmenu(helpMenu, title: "Help", to: mainMenu)
         NSApp.helpMenu = helpMenu
 

@@ -23,6 +23,8 @@ Other features:
 - Address bar, back/forward, reload, zoom, ⌘-click to open in a new window
 - View → iPhone-Size Window (⌘⇧P) to switch between phone and laptop layouts
 - Web Inspector enabled (right-click → Inspect Element) for debugging
+- Help → Record Diagnostics / Save Diagnostic Report: logs redirects, status codes and what page
+  scripts check, to `~/Desktop/DodoMac-diagnostics.txt` (never cookie values or passwords)
 
 ## Download a prebuilt app
 

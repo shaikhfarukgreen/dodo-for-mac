@@ -117,6 +117,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    @objc func toggleDiagnostics(_ sender: Any?) {
+        let recording = !Diagnostics.shared.isRecording
+        Diagnostics.shared.setRecording(recording)
+        (sender as? NSMenuItem)?.state = recording ? .on : .off
+        // Re-install user scripts so the probe is added or removed, then start from the home page.
+        for controller in windowControllers {
+            WebViewFactory.applyProfile(to: controller.webView.configuration)
+        }
+        if recording {
+            let alert = NSAlert()
+            alert.messageText = "Recording diagnostics"
+            alert.informativeText = "Now open the site and go to the page that isn't working. Then choose Help > Save Diagnostic Report. The report goes to your Desktop; it contains page addresses and scripts, never cookie values or passwords."
+            alert.runModal()
+        }
+    }
+
+    @objc func saveDiagnostics(_ sender: Any?) {
+        Diagnostics.shared.saveReport()
+    }
+
     @objc func openHelp(_ sender: Any?) {
         if let url = URL(string: "https://github.com/shaikhfarukgreen/dodo-for-mac#readme") {
             NSWorkspace.shared.open(url)
