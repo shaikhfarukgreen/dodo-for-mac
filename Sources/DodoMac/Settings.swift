@@ -1,12 +1,14 @@
 import Foundation
 
 enum PopupBehavior: String, CaseIterable {
+    case sameSiteOnly
     case newWindow
     case sameWindow
     case block
 
     var title: String {
         switch self {
+        case .sameSiteOnly: return "Allow same site only (block ad pop-ups)"
         case .newWindow: return "Open in a new window"
         case .sameWindow: return "Open in the same window"
         case .block: return "Block"
@@ -31,7 +33,9 @@ final class Settings {
         static let profileID = "userAgentProfileID"
         static let customUserAgent = "customUserAgent"
         static let spoofNavigator = "spoofNavigator"
-        static let popupBehavior = "popupBehavior"
+        static let popupBehavior = "popupBehaviorV2"
+        static let blockAds = "blockAds"
+        static let strictScriptBlocking = "strictScriptBlocking"
         static let lastURL = "lastURL"
         static let restoreLastPage = "restoreLastPage"
         static let lastUserAgent = "lastUserAgent"
@@ -43,7 +47,9 @@ final class Settings {
             Key.profileID: UserAgentProfile.iPhoneWebView.id,
             Key.customUserAgent: "",
             Key.spoofNavigator: true,
-            Key.popupBehavior: PopupBehavior.newWindow.rawValue,
+            Key.popupBehavior: PopupBehavior.sameSiteOnly.rawValue,
+            Key.blockAds: true,
+            Key.strictScriptBlocking: true,
             // Like Dodo, start from the home URL: the site decides where to send you from there.
             Key.restoreLastPage: false,
         ])
@@ -70,8 +76,19 @@ final class Settings {
     }
 
     var popupBehavior: PopupBehavior {
-        get { PopupBehavior(rawValue: defaults.string(forKey: Key.popupBehavior) ?? "") ?? .newWindow }
+        get { PopupBehavior(rawValue: defaults.string(forKey: Key.popupBehavior) ?? "") ?? .sameSiteOnly }
         set { defaults.set(newValue.rawValue, forKey: Key.popupBehavior) }
+    }
+
+    var blockAds: Bool {
+        get { defaults.bool(forKey: Key.blockAds) }
+        set { defaults.set(newValue, forKey: Key.blockAds) }
+    }
+
+    /// Also block third-party scripts that are not on the allowlist.
+    var strictScriptBlocking: Bool {
+        get { defaults.bool(forKey: Key.strictScriptBlocking) }
+        set { defaults.set(newValue, forKey: Key.strictScriptBlocking) }
     }
 
     var restoreLastPage: Bool {

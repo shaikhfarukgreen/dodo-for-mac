@@ -380,6 +380,12 @@ extension BrowserWindowController: WKNavigationDelegate {
             return
         }
 
+        if Settings.shared.blockAds, navigationAction.targetFrame?.isMainFrame ?? true, AdBlocker.isAdURL(url) {
+            Diagnostics.shared.log("BLOCKED ad redirect \(url.absoluteString)")
+            decisionHandler(.cancel, preferences)
+            return
+        }
+
         if navigationAction.shouldPerformDownload {
             decisionHandler(.download, preferences)
             return
@@ -440,9 +446,21 @@ extension BrowserWindowController: WKNavigationDelegate {
 extension BrowserWindowController: WKUIDelegate {
     /// Handles `window.open()` and `target="_blank"` links.
     func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        let target = navigationAction.request.url
+        if let target = target, AdBlocker.isAdURL(target) {
+            Diagnostics.shared.log("BLOCKED ad pop-up \(target.absoluteString)")
+            return nil
+        }
         switch Settings.shared.popupBehavior {
         case .block:
             return nil
+        case .sameSiteOnly:
+            // Ad pop-ups open other sites (or a blank page they fill in later); the site's own windows are kept.
+            guard let key = AdBlocker.siteKey(target), key == AdBlocker.siteKey(webView.url) else {
+                Diagnostics.shared.log("BLOCKED pop-up \(target?.absoluteString ?? "(blank)")")
+                return nil
+            }
+            return AppDelegate.shared.openPopupWindow(configuration: configuration).webView
         case .sameWindow:
             if navigationAction.request.url != nil {
                 webView.load(navigationAction.request)

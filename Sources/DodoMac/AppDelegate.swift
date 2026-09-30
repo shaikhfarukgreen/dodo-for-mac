@@ -10,8 +10,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.mainMenu = MainMenu.build()
         NSApp.activate(ignoringOtherApps: true)
-        clearDataIfIdentityChanged { [weak self] in
-            self?.openNewWindow(with: Settings.shared.startURL)
+        AdBlocker.prepare { [weak self] in
+            self?.clearDataIfIdentityChanged {
+                self?.openNewWindow(with: Settings.shared.startURL)
+            }
         }
     }
 

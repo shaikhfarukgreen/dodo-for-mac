@@ -7,6 +7,8 @@ final class SettingsWindowController: NSWindowController {
     private let spoofCheckbox = NSButton(checkboxWithTitle: "Make navigator.platform / touch support match the device", target: nil, action: nil)
     private let restoreCheckbox = NSButton(checkboxWithTitle: "Reopen the last page on launch", target: nil, action: nil)
     private let popupBehaviorPopup = NSPopUpButton()
+    private let blockAdsCheckbox = NSButton(checkboxWithTitle: "Block ads (known ad networks)", target: nil, action: nil)
+    private let strictCheckbox = NSButton(checkboxWithTitle: "Strict: also block other sites' scripts (turn off if a page breaks)", target: nil, action: nil)
 
     private var profileIDs: [String] = []
 
@@ -57,6 +59,8 @@ final class SettingsWindowController: NSWindowController {
             [label("Custom User-Agent:"), customUAField],
             [NSGridCell.emptyContentView, spoofCheckbox],
             [label("Pop-up windows:"), popupBehaviorPopup],
+            [label("Ads:"), blockAdsCheckbox],
+            [NSGridCell.emptyContentView, strictCheckbox],
             [NSGridCell.emptyContentView, restoreCheckbox],
             [NSGridCell.emptyContentView, hint],
         ])
@@ -108,6 +112,8 @@ final class SettingsWindowController: NSWindowController {
         customUAField.stringValue = settings.customUserAgent
         spoofCheckbox.state = settings.spoofNavigator ? .on : .off
         restoreCheckbox.state = settings.restoreLastPage ? .on : .off
+        blockAdsCheckbox.state = settings.blockAds ? .on : .off
+        strictCheckbox.state = settings.strictScriptBlocking ? .on : .off
         popupBehaviorPopup.selectItem(at: PopupBehavior.allCases.firstIndex(of: settings.popupBehavior) ?? 0)
         updateCustomFieldState()
     }
@@ -136,6 +142,8 @@ final class SettingsWindowController: NSWindowController {
         profilePopup.selectItem(at: 0)
         spoofCheckbox.state = .on
         restoreCheckbox.state = .off
+        blockAdsCheckbox.state = .on
+        strictCheckbox.state = .on
         popupBehaviorPopup.selectItem(at: 0)
         updateCustomFieldState()
     }
@@ -150,6 +158,8 @@ final class SettingsWindowController: NSWindowController {
         }
         settings.spoofNavigator = spoofCheckbox.state == .on
         settings.restoreLastPage = restoreCheckbox.state == .on
+        settings.blockAds = blockAdsCheckbox.state == .on
+        settings.strictScriptBlocking = strictCheckbox.state == .on
         settings.popupBehavior = PopupBehavior.allCases[popupBehaviorPopup.indexOfSelectedItem]
         settings.notifyChanged()
         window?.close()

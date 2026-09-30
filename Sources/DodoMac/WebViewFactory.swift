@@ -42,6 +42,7 @@ enum WebViewFactory {
         config.defaultWebpagePreferences.preferredContentMode = profile.prefersMobileContent ? .mobile : .desktop
 
         let controller = config.userContentController
+        AdBlocker.apply(to: controller)
         controller.removeAllUserScripts()
         if settings.spoofNavigator, let source = profile.spoofingScript {
             let script = WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: false)

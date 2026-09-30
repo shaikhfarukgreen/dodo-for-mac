@@ -18,7 +18,8 @@ Other features:
 - Opens `https://netmirror.app` on launch (the Home button goes back there)
 - Cookies / logins are kept between launches and shared across windows
 - Video autoplay, HLS playback, AirPlay and HTML5 full-screen video
-- `window.open` / `target=_blank` popups (new window, same window, or blocked; see Settings)
+- Built-in ad blocking: known ad networks, ad pop-ups and redirects, and (strict mode) other sites' scripts
+- `window.open` / `target=_blank` popups: same-site only by default (new window, same window or block in Settings)
 - JavaScript `alert` / `confirm` / `prompt`, file uploads, downloads to `~/Downloads`
 - Address bar, back/forward, reload, zoom, ⌘-click to open in a new window
 - View → iPhone-Size Window (⌘⇧P) to switch between phone and laptop layouts
